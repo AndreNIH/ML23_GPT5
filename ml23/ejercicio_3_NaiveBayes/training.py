@@ -63,7 +63,7 @@ if __name__ == "__main__":
     model.fit(X_train, y_train)
     accuracy = model.score(X_val, y_val)
     #Prediccion
-    ejemplos=dataset['Validation'][:2]
+    ejemplos=dataset['validation'][:2]
     #obtener representacion de vector de mis ejemplos
     ejemplos_x, ejemplos_label = preprocess_dataset(dataset['validation'], vocabulary)
     predicciones=model.predict(ejemplos_x[:2])
