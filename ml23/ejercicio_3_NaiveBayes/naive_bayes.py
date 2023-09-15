@@ -3,14 +3,16 @@ import numpy as np
 class NaiveBayes():
     def __init__(self, alpha=1) -> None:
         self.alpha = 1e-10 if alpha < 1e-10 else alpha
+        self._likelihoods_negatives = []
+        self._likelihoods_positives = []
 
     def fit(self, X, y):
         # TODO: Calcula la probabilidad de que una muestra sea positiva P(y=1)
-        sum=0
+        psum=0
         for i in y:
             if y[i]==1:
-                sum=sum+1 
-        self.prior_positive=sum/len(y)
+                psum=psum+1 
+        self.prior_positive=psum/len(y)
         
         # TODO: Calcula la probabilidad de que una muestra sea negativa P(y=0)
         self.prior_negative = 1-self.prior_positive
@@ -19,12 +21,17 @@ class NaiveBayes():
         # calcula la probabilidad de: P(x_i| y=1)
         # Guardalas en un arreglo de numpy:
         # self._likelihoods_positives = [P(x_1| y=1), P(x_2| y=1), ..., P(x_n| y=1)]
-        self._likelihoods_positives =np.ones(len(X[0]))
-        self._likelihoods_negatives =np.ones(len(X[0]))
+        
+        for review in X:
+            self._likelihoods_negatives.append(np.ones(len(review)))
+            self._likelihoods_positives.append(np.ones(len(review)))
+            #self._likelihoods_positives = np.ones(len(X[0]))
+            #self._likelihoods_negatives = np.ones(len(X[0]))
         #np.sum(...)
         i=0
         ia=0
         ib=0
+        '''
         for i in y:
             if y[i]==1:
                 self._likelihoods_positives [ia] = (np.sum(X[i], axis=0))/sum
@@ -32,6 +39,20 @@ class NaiveBayes():
             else:
                 self._likelihoods_negatives [ib] = (np.sum(X[i], axis=0))/(total-sum)
                 ib=+1
+        '''
+
+        
+        
+        totalPositiveReviews = sum(reviewType == 1 for reviewType in y)
+        totalNegativeReviews = sum(reviewType == 0 for reviewType in y)
+        for i in range(0, len(y)):
+            #Branch positivo
+            if y[i] == 1:
+                for word in X[i]:
+                    occurancesInReview = (X[i] == word).sum() #Esto esta roto
+                    print(occurancesInReview)
+
+        
         #P(y|X)=(P(X|y)*P(y))/P(X)
         # TODO:  Para cada palabra del vocabulario x_i, calcula P(x_i| y=0)
         # Guardalas en un arreglo de numpy:
