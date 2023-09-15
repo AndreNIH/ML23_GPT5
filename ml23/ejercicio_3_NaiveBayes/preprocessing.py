@@ -2,8 +2,7 @@ import numpy as np
 
 def get_vocab(dataset):
     '''
-        # Calcula un diccionario cuyas llaves sean las palabras de un vocabulario
-        y el valor sea el indice de la palabra en el vocabulario.
+        # Calcula un diccionario cuyas llaves sean las palabras de un vocabulario y el valor sea el indice de la palabra en el vocabulario.
         vocabulary = {
             'word_1': 0,
             'word_2': 1,
@@ -11,13 +10,14 @@ def get_vocab(dataset):
             ...
         }
     '''
-    vocabulary = {}
+    vocabulary={}
     idx = 0
-    for i in range(len(dataset)):
-        sample = dataset[i]
-        for word in sample['text'].split():
-            if word not in vocabulary:
-                vocabulary[word] = idx
+    for sample in dataset:
+        review = sample['text']
+        words = review.split('')
+        for w in words:
+            if w not in vocabulary:
+                vocabulary[w]=idx
                 idx += 1
     vocabulary['UNK'] = idx
     return vocabulary
@@ -37,7 +37,11 @@ def get_one_hot_vector(text, vocabulary):
     '''
     one_hot = np.zeros(len(vocabulary))
     # TODO: Genera el vector X dato el texto y vocabulario
-
+    for i in range(len(text)):
+        sample = text[i]
+        for words in sample['text'].split():
+            if words in vocabulary[words]:
+                one_hot[words] = 1
     return one_hot
 
 def preprocess_dataset(dataset, vocabulary):
@@ -61,5 +65,6 @@ def preprocess_dataset(dataset, vocabulary):
     for i in range(len(dataset)):
         sample = dataset[i]
         X.append(get_one_hot_vector(sample['text'], vocabulary))
-        y.append(sample['label'])
+        if 'label' in sample:
+            y.append(sample['label'])
     return np.array(X), np.array(y)
