@@ -3,19 +3,19 @@ import os
 import numpy as np
 from sklearn.naive_bayes import MultinomialNB
 
-from ml23.ejercicio_3_NaiveBayes.preprocessing import get_vocab, preprocess_dataset
-from ml23.ejercicio_3_NaiveBayes.naive_bayes import NaiveBayes
+from preprocessing import get_vocab, preprocess_dataset
+from naive_bayes import NaiveBayes
 THIS_PATH = os.path.dirname(os.path.abspath(__file__))
 DATASET_PATH = os.path.join(THIS_PATH, 'rotten_tomatoes_dataset.py')
 
 '''
     Instrucciones:
     - En preprocessing.py completa el método get_one_hot_vector
-    - En naive_bayes.py completa los métodos fit y score
+    - En naive_bayes.py completa los métodos fit y predict
     - cuando finalices corre este archivo para entrenar y evaluar tu modelo.
 
     Entrega en blackboard a modo texto:
-     - Dos ejemplos falsos poitivos
+     - Dos ejemplos falsos positivos
      - Dos ejemplos de falsos negativos
      - Dos ejemplos de verdaderos positivos
      Para el conjunto de validación.

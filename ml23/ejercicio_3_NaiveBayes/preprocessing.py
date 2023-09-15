@@ -12,12 +12,11 @@ def get_vocab(dataset):
     '''
     vocabulary={}
     idx = 0
-    for sample in dataset:
-        review = sample['text']
-        words = review.split('')
-        for w in words:
-            if w not in vocabulary:
-                vocabulary[w]=idx
+    for i in range(len(dataset)):
+        sample = dataset[i]
+        for word in sample['text'].split():
+            if word not in vocabulary:
+                vocabulary[word] = idx
                 idx += 1
     vocabulary['UNK'] = idx
     return vocabulary
@@ -35,13 +34,9 @@ def get_one_hot_vector(text, vocabulary):
             }
             one_hot = [1, 1, 0]
     '''
-    one_hot = np.zeros(len(vocabulary))
+    #one_hot = np.zeros(len(vocabulary))
     # TODO: Genera el vector X dato el texto y vocabulario
-    for i in range(len(text)):
-        sample = text[i]
-        for words in sample['text'].split():
-            if words in vocabulary[words]:
-                one_hot[words] = 1
+    one_hot = np.ones(len(vocabulary))
     return one_hot
 
 def preprocess_dataset(dataset, vocabulary):
