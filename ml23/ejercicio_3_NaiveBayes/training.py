@@ -66,8 +66,9 @@ if __name__ == "__main__":
     ejemplos=dataset['validation'][:2]
     #obtener representacion de vector de mis ejemplos
     ejemplos_x, ejemplos_label = preprocess_dataset(dataset['validation'], vocabulary)
-    predicciones=model.predict(ejemplos_x[:2])
-    for ej,pred in zip(ejemplos, predicciones):
-        print(ej['text'], pred)
+    predicciones=model.predict(ejemplos_x[:2])    
+    for ej,pred in zip(ejemplos['text'], predicciones):
+         print(f'\nText={ej}.\nPrediction:{"Positiva" if pred else "Negativa"}\n')
+    
     # Evaluación
     print(f"sk-learn accuracy: {sk_score} \t Propio accuracy: {accuracy}")
