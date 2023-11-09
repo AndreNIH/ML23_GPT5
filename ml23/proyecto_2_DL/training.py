@@ -32,9 +32,12 @@ def validation_step(val_loader, net, cost_function):
         batch_labels = batch_labels.to(device)
         with torch.inference_mode():
             # TODO: realiza un forward pass, calcula el loss y acumula el costo
-            ...
+            outputs = net(batch_imgs)
+            predictions = torch.argmax(outputs,dim=1)
+            loss = criterion(predictions, batch_labels)
+            running_loss += loss.item()
     # TODO: Regresa el costo promedio por minibatch
-    return ...
+    return running_loss/len(val_loader)
 
 def train():
     # Hyperparametros
@@ -59,30 +62,37 @@ def train():
                      n_classes = 7)
 
     # TODO: Define la funcion de costo
-    criterion = ...
+    criterion = nn.CrossEntropyLoss()
 
     # Define el optimizador
-    optimizer = ...
-
+    optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.01)
     best_epoch_loss = np.inf
     for epoch in range(n_epochs):
         train_loss = 0
+        cont=0
         for i, batch in enumerate(tqdm(train_loader, desc=f"Epoch: {epoch}")):
             batch_imgs = batch['transformed']
             batch_labels = batch['label']
             # TODO Zero grad, forward pass, backward pass, optimizer step
-            ...
+            optimizer.zero_grad()
+            print(batch_imgs)
+            preds = modelo(batch_imgs)
+            loss = criterion(preds, batch_labels)
+            loss.backward()
+            optimizer.step()
 
             # TODO acumula el costo
-            ...
+            running_loss += loss.item()
+            cont+=1
 
         # TODO Calcula el costo promedio
-        train_loss = ...
+        train_loss = running_loss/cont
         val_loss = validation_step(val_loader, modelo, criterion)
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         # TODO guarda el modelo si el costo de validación es menor al mejor costo de validación
-        ...
+        if(train_loss<best_epoch_loss):
+            modelo.save_model("net1")
         plotter.on_epoch_end(epoch, train_loss, val_loss)
     plotter.on_train_end()
 

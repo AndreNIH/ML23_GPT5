@@ -163,9 +163,9 @@ def main():
 
         np_img = add_img_text(np_img, emotion)
 
-        cv2.imshow("img", np_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        #cv2.imshow("img", np_img)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
