@@ -32,7 +32,7 @@ def validation_step(val_loader, net, cost_function):
         batch_labels = batch_labels.to(device)
         with torch.inference_mode():
             # TODO: realiza un forward pass, calcula el loss y acumula el costo
-            outputs = net(batch_imgs)
+            outputs,_ = net(batch_imgs)
             predictions = torch.argmax(outputs,dim=1)
             loss = criterion(predictions, batch_labels)
             running_loss += loss.item()
@@ -76,7 +76,7 @@ def train():
             # TODO Zero grad, forward pass, backward pass, optimizer step
             optimizer.zero_grad()
             print(batch_imgs)
-            preds = modelo(batch_imgs)
+            preds,_ = modelo(batch_imgs)
             loss = criterion(preds, batch_labels)
             loss.backward()
             optimizer.step()

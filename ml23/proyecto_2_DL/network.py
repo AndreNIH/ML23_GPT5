@@ -17,7 +17,7 @@ class Network(nn.Module):
         # TODO: Define las capas de tu red
         self.conv1 = nn.Conv2d(1,16,kernel_size=5)
         self.conv2 = nn.Conv2d(16,32,kernel_size=5)
-        self.lineal1 = nn.Linear(32*24*24,1024)
+        self.lineal1 = nn.Linear(64*calc_out_dim(self,32,2)*calc_out_dim(self,32,2),1024)
         self.lineal2 = nn.Linear(1024,n_classes)
   
         self.to(self.device)
