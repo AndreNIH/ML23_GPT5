@@ -18,14 +18,15 @@ def get_transforms(split, img_size):
     # https://pytorch.org/vision/stable/transforms.html
     common = [torchvision.transforms.ToTensor(),
                 torchvision.transforms.Grayscale(),
-                torchvision.transforms.Resize((img_size, img_size)),
-                torchvision.transforms.RandomHorizontalFlip(p=0.5),
-                torchvision.transforms.RandomAdjustSharpness(sharpness_factor=2)]
+                torchvision.transforms.Resize((img_size, img_size))]
     
     mean, std = 0.5, 0.5
     if split == "train":
         transforms = torchvision.transforms.Compose([
             *common,
+            torchvision.transforms.RandomHorizontalFlip(p=0.5),
+            torchvision.transforms.RandomAdjustSharpness(sharpness_factor=2),
+            torchvision.transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5.)),
             torchvision.transforms.ColorJitter(brightness=0.5,
                                                 contrast=0.4,
                                                 saturation=0,
