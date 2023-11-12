@@ -34,6 +34,8 @@ def predict(img_title_paths):
         original, transformed, denormalized = load_img(im_file)
 
         # Inferencia
+        if len(transformed.shape) ==3:
+            transformed = transformed.unsqueeze(1)
         logits, proba = modelo.predict(transformed)
         pred = torch.argmax(proba, -1).item()
         pred_label = EMOTIONS_MAP[pred]
