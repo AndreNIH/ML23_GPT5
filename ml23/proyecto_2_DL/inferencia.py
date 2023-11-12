@@ -26,7 +26,7 @@ def predict(img_title_paths):
     '''
     # Cargar el modelo
     modelo = Network(48, 7)
-    modelo.load_model("modelo_1.pt")
+    modelo.load_model("modelo_2.pt")
     for path in img_title_paths:
         # Cargar la imagen
         # np.ndarray, torch.Tensor
@@ -39,6 +39,9 @@ def predict(img_title_paths):
         logits, proba = modelo.predict(transformed)
         pred = torch.argmax(proba, -1).item()
         pred_label = EMOTIONS_MAP[pred]
+        print(EMOTIONS_MAP[pred])
+        print(path)
+
 
         # Original / transformada
         h, w = original.shape[:2]
@@ -55,5 +58,12 @@ def predict(img_title_paths):
 
 if __name__=="__main__":
     # Direcciones relativas a este archivo
-    img_paths = ["./test_imgs/happy.png"]
+    img_paths = ["./test_imgs/happy.png",
+    "./test_imgs/Asco.jpg",
+    "./test_imgs/Enojado.jpg",
+    "./test_imgs/Feliz.jpg",
+    "./test_imgs/Miedo.jpg",
+    "./test_imgs/Neutral.jpg",
+    "./test_imgs/Sorpresa.jpg",
+    "./test_imgs/Triste.jpg"]
     predict(img_paths)
