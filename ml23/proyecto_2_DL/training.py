@@ -40,8 +40,8 @@ def validation_step(val_loader, net, cost_function):
 
 def train():
     # Hyperparametros
-    learning_rate = 1e-5
-    n_epochs= 30
+    learning_rate = 1e-6
+    n_epochs= 1
     batch_size = 256
 
     # Train, validation, test loaders
@@ -64,12 +64,11 @@ def train():
     cost_function = nn.CrossEntropyLoss()
 
     # Define el optimizador
-    optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.01)
+    optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.001)
     best_epoch_loss = np.inf
+    best_epoch_loss_train = np.inf
     for epoch in range(n_epochs):
         train_loss = 0
-        cont=0
-        running_loss = 0.0
         for i, batch in enumerate(tqdm(train_loader, desc=f"Epoch: {epoch}")):
             batch_imgs = batch['transformed']
             batch_labels = batch['label']
@@ -83,18 +82,22 @@ def train():
             optimizer.step()
 
             # TODO acumula el costo
-            running_loss += loss.item()
-            cont+=1
+            train_loss += loss.item()
 
         # TODO Calcula el costo promedio
-        train_loss = running_loss/cont
+        train_loss = train_loss/len(train_loader)
         val_loss = validation_step(val_loader, modelo, cost_function)
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         # TODO guarda el modelo si el costo de validación es menor al mejor costo de validación
-        if(train_loss<best_epoch_loss):
-            modelo.save_model("modelo_2.pt")
+        if(val_loss<best_epoch_loss):
+            modelo.save_model("modelo_val.pt")
+            best_epoch_loss=val_loss
+        if(train_loss<best_epoch_loss_train):
+            modelo.save_model("modelo_ent.pt")
+            best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
+    modelo.save_model("modelo_fin.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":

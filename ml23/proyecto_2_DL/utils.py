@@ -18,7 +18,9 @@ def get_transforms(split, img_size):
     # https://pytorch.org/vision/stable/transforms.html
     common = [torchvision.transforms.ToTensor(),
                 torchvision.transforms.Grayscale(),
-                torchvision.transforms.Resize((img_size, img_size))]
+                torchvision.transforms.Resize((img_size, img_size)),
+                torchvision.transforms.RandomHorizontalFlip(p=0.5),
+                torchvision.transforms.RandomAdjustSharpness(sharpness_factor=2)]
     
     mean, std = 0.5, 0.5
     if split == "train":
