@@ -12,12 +12,12 @@ class Network(nn.Module):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # TODO: Calcular dimension de salida
-        #out_dim = calc_out_dim(self, input_dim, 5, stride=1, padding=0)
+        out_dim = self.calc_out_dim(input_dim,5)
 
         # TODO: Define las capas de tu red
         self.conv1 = nn.Conv2d(1,16,kernel_size=5)
         self.conv2 = nn.Conv2d(16,32,kernel_size=5)
-        self.lineal1 = nn.Linear(64*calc_out_dim(self,32,2)*calc_out_dim(self,32,2),1024)
+        self.lineal1 = nn.Linear(32*self.calc_out_dim(out_dim,5)*self.calc_out_dim(out_dim,5),1024)
         self.lineal2 = nn.Linear(1024,n_classes)
   
         self.to(self.device)
@@ -27,6 +27,8 @@ class Network(nn.Module):
         return out_dim
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if torch.cuda.is_available():
+            x = x.cuda()
         # TODO: Define la propagacion hacia adelante de tu red
         x = self.conv1(x)
         x = F.relu(x)
