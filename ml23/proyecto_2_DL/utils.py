@@ -24,6 +24,8 @@ def get_transforms(split, img_size):
     if split == "train":
         transforms = torchvision.transforms.Compose([
             *common,
+            torchvision.transforms.RandomHorizontalFlip(p=0.5),
+            torchvision.transforms.RandomAdjustSharpness(sharpness_factor=2),
             torchvision.transforms.ColorJitter(brightness=0.5,
                                                 contrast=0.4,
                                                 saturation=0,
