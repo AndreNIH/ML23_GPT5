@@ -25,6 +25,8 @@ def validation_step(val_loader, net, cost_function):
         - val_loss (float): el costo total (promedio por minibatch) de todos los datos de validación
     '''
     val_loss = 0.0
+    correct = 0
+    total = 0
     for i, batch in enumerate(val_loader, 0):
         batch_imgs = batch['transformed']
         batch_labels = batch['label']
@@ -32,17 +34,25 @@ def validation_step(val_loader, net, cost_function):
             batch_labels = batch_labels.cuda()
         with torch.inference_mode():
             # TODO: realiza un forward pass, calcula el loss y acumula el costo
-            outputs,_ = net(batch_imgs)
+            outputs,proba = net(batch_imgs)
             loss = cost_function(outputs, batch_labels)
             val_loss += loss.item()
+
+            predictions = torch.argmax(proba,dim=1)
+            total += batch_labels.size(0)
+            cor = (predictions == batch_labels).sum().item()
+            correct += cor
+
     # TODO: Regresa el costo promedio por minibatch
+    accuracy = 100 * float(correct) / total
+    print(f"Accuracy: {accuracy}")
     return val_loss/len(val_loader)
 
 def train():
     # Hyperparametros
-    learning_rate = 1e-6
-    n_epochs= 1
-    batch_size = 256
+    learning_rate = 1e-5
+    n_epochs= 50
+    batch_size = 32
 
     # Train, validation, test loaders
     train_dataset, train_loader = \
@@ -64,7 +74,7 @@ def train():
     cost_function = nn.CrossEntropyLoss()
 
     # Define el optimizador
-    optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.001)
+    optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.01)
     best_epoch_loss = np.inf
     best_epoch_loss_train = np.inf
     for epoch in range(n_epochs):
@@ -91,13 +101,13 @@ def train():
 
         # TODO guarda el modelo si el costo de validación es menor al mejor costo de validación
         if(val_loss<best_epoch_loss):
-            modelo.save_model("modelo_val.pt")
+            modelo.save_model("modelo_val_h.pt")
             best_epoch_loss=val_loss
         if(train_loss<best_epoch_loss_train):
-            modelo.save_model("modelo_ent.pt")
+            modelo.save_model("modelo_ent_h.pt")
             best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
-    modelo.save_model("modelo_fin.pt")
+    modelo.save_model("modelo_fin_h.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":
