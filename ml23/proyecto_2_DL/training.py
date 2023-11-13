@@ -101,13 +101,13 @@ def train():
 
         # TODO guarda el modelo si el costo de validación es menor al mejor costo de validación
         if(val_loss<best_epoch_loss):
-            modelo.save_model("modelo_val_h.pt")
+            modelo.save_model("modelo_val_1.pt")
             best_epoch_loss=val_loss
         if(train_loss<best_epoch_loss_train):
-            modelo.save_model("modelo_ent_h.pt")
+            modelo.save_model("modelo_ent_1.pt")
             best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
-    modelo.save_model("modelo_fin_h.pt")
+    modelo.save_model("modelo_fin_1.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":
