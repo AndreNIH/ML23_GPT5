@@ -19,7 +19,7 @@ class Network(nn.Module):
         self.conv2 = nn.Conv2d(16,32,kernel_size=5)
         self.lineal1 = nn.Linear(32*self.calc_out_dim(out_dim,5)*self.calc_out_dim(out_dim,5),1024)
         self.lineal2 = nn.Linear(1024,n_classes)
-  
+        
         self.to(self.device)
  
     def calc_out_dim(self, in_dim, kernel_size, stride=1, padding=0):
