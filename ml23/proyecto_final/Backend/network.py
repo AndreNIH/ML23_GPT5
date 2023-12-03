@@ -11,7 +11,7 @@ class Network(nn.Module):
         super().__init__()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-        out_dim =  self.calc_out_dim(input_dim,5, padding=2)
+        out_dim =  self. calc_out_dim(input_dim,5, padding=2)
 
         self.conv1 = nn.Conv2d(1,16,kernel_size=5, padding=2)
         self.conv2 = nn.Conv2d(16,32,kernel_size=5)
@@ -35,7 +35,11 @@ class Network(nn.Module):
         x = self.lineal1(x)
         x = F.relu(x)
         logits = self.lineal2(x)
-        proba = F.softmax(logits, dim=1)
+        logistic = nn.Sigmoid()
+        proba = logistic(logits,proba)
+
+
+        # must be final -> x = torch.sigmoid()
 
         return logits, proba
 
