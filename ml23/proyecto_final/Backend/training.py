@@ -23,13 +23,16 @@ def validation_step(val_loader, net, cost_function):
         if torch.cuda.is_available():
             batch_labels = batch_labels.cuda()
         with torch.inference_mode():
-            outputs,proba = net(batch_imgs)
-            loss = cost_function(outputs, batch_labels)
+            proba = net(batch_imgs)
+            proba = proba.squeeze()
+
+            loss = cost_function(proba.to(torch.float32), batch_labels.to(torch.float32))
             val_loss += loss.item()
 
-            predictions = torch.argmax(proba,dim=1)
+            preds = torch.where(proba >= 0.5, torch.tensor(1), torch.tensor(0))
+
             total += batch_labels.size(0)
-            cor = (predictions == batch_labels).sum().item()
+            cor = (preds == batch_labels).sum().item()
             correct += cor
 
     accuracy = 100 * float(correct) / total
@@ -38,7 +41,7 @@ def validation_step(val_loader, net, cost_function):
 
 def train():
     learning_rate = 1e-5
-    n_epochs= 50
+    n_epochs= 5
     batch_size = 256
 
     train_dataset, train_loader, _, _ = \
@@ -51,10 +54,9 @@ def train():
     print(f"Cargando datasets --> entrenamiento: {len(train_dataset)}, validacion: {len(val_dataset)}")
 
     plotter = PlotLosses()
-    modelo = Network(input_dim = 48,
-                     n_classes = 7)
+    modelo = Network(input_dim = 48)
 
-    cost_function = nn.CrossEntropyLoss()
+    cost_function = nn.BCELoss()
 
     optimizer = optim.Adam(modelo.parameters(), learning_rate, weight_decay=0.01)
     best_epoch_loss = np.inf
@@ -67,8 +69,9 @@ def train():
             if torch.cuda.is_available():
                 batch_labels = batch_labels.cuda()
             optimizer.zero_grad()
-            preds,_ = modelo(batch_imgs)
-            loss = cost_function(preds, batch_labels)
+            preds = modelo(batch_imgs)
+            preds = preds.squeeze()
+            loss = cost_function(preds.to(torch.float32), batch_labels.to(torch.float32))
             loss.backward()
             optimizer.step()
 

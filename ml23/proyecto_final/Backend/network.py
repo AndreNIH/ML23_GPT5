@@ -7,17 +7,18 @@ import pathlib
 file_path = pathlib.Path(__file__).parent.absolute()
 
 class Network(nn.Module):
-    def __init__(self, input_dim: int, n_classes: int) -> None:
+    def __init__(self, input_dim: int) -> None:
         super().__init__()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-        out_dim =  self. calc_out_dim(input_dim,5, padding=2)
+        out_dim =  self.calc_out_dim(input_dim,5, padding=2)
 
         self.conv1 = nn.Conv2d(1,16,kernel_size=5, padding=2)
         self.conv2 = nn.Conv2d(16,32,kernel_size=5)
         self.lineal1 = nn.Linear(32*self.calc_out_dim(out_dim,5)*self.calc_out_dim(out_dim,5),1024)
-        self.lineal2 = nn.Linear(1024,n_classes)
-        
+        self.lineal2 = nn.Linear(1024,1)
+        self.logistic = nn.Sigmoid()
+
         self.to(self.device)
  
     def calc_out_dim(self, in_dim, kernel_size, stride=1, padding=0):
@@ -34,14 +35,9 @@ class Network(nn.Module):
         x = torch.flatten(x, start_dim=1)
         x = self.lineal1(x)
         x = F.relu(x)
-        logits = self.lineal2(x)
-        logistic = nn.Sigmoid()
-        proba = logistic(logits,proba)
-
-
-        # must be final -> x = torch.sigmoid()
-
-        return logits, proba
+        x = self.lineal2(x)
+        x = self.logistic(x)
+        return x
 
     def predict(self, x):
         with torch.inference_mode():

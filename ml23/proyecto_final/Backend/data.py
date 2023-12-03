@@ -11,6 +11,7 @@ import pandas as pd
 from torchvision.io import read_image
 from pathlib import Path
 import glob
+from transformaciones import *
 
 file_path = Path(__file__).parent.absolute()
 dataset_path = file_path / 'data' / 'Dataset'
@@ -39,6 +40,10 @@ test_transforms = transforms.Compose([
     torchvision.transforms.Normalize((mean,), (std,))
 ])
 
+visualizar_transforms = transforms.Compose([
+    *global_transforms
+])
+
 class EyeDataset(Dataset):
     def __init__(self, root_dir, transform = None):
         self.root_dir = root_dir
@@ -51,6 +56,7 @@ class EyeDataset(Dataset):
         label = int(label)
 
         image = transforms.ToPILImage()(image)
+
         if self.transform:
             image = self.transform(image)
 
@@ -90,4 +96,30 @@ def get_loader(batch_size, shuffle=True, num_workers=0):
 
     return train_dataset, train_dataloader, val_dataset, val_dataloader
 
+def visualizar(max_iterations):
+    split = "train"
+    dataset = EyeDataset(root_dir = dataset_path, transform=visualizar_transforms)
+    dataloader = DataLoader(dataset=dataset,batch_size=1, shuffle=False, num_workers=0)
+    print(f"Loading {split} set with {len(dataloader)} samples")
 
+    for iteration, datapoint in enumerate(dataloader):
+        if iteration >= max_iterations:
+            break
+
+        transformed = datapoint['transformed']
+        label = datapoint['label']
+        estado = datapoint['estado'][0]
+
+        transformed = to_numpy(transformed)
+
+        viz_size = (200, 200)
+        transformed = cv2.resize(transformed, viz_size)
+
+        np_img = add_img_text(transformed, estado)
+
+        cv2.imshow("img", np_img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    visualizar(10)
