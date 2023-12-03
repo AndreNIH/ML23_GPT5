@@ -82,13 +82,13 @@ def train():
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         if(val_loss<best_epoch_loss):
-            modelo.save_model("modelo_val_1.pt")
+            modelo.save_model("modelo_val_2.pt")
             best_epoch_loss=val_loss
         if(train_loss<best_epoch_loss_train):
-            modelo.save_model("modelo_ent_1.pt")
+            modelo.save_model("modelo_ent_2.pt")
             best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
-    modelo.save_model("modelo_fin_1.pt")
+    modelo.save_model("modelo_fin_2.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":
