@@ -1,0 +1,1 @@
+Aqui se generan las imagenes de costo.
