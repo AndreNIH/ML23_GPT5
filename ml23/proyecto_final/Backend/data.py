@@ -69,7 +69,7 @@ class EyeDataset(Dataset):
     def __len__(self):
         return len(os.listdir(self.root_dir))
 
-def get_loader(batch_size, shuffle=True, num_workers=0):
+def get_loader(batch_size, num_workers=0):
 
     train_dataset = EyeDataset(root_dir = dataset_path, transform=train_transforms)
     val_dataset = EyeDataset(root_dir = dataset_path, transform=test_transforms)
@@ -84,13 +84,13 @@ def get_loader(batch_size, shuffle=True, num_workers=0):
     train_dataloader = DataLoader(
                 train_dataset,
                 batch_size=batch_size,
-                shuffle=shuffle,
+                shuffle=True,
                 num_workers=num_workers,
     )
     val_dataloader = DataLoader(
                 val_dataset,
                 batch_size=batch_size,
-                shuffle=shuffle,
+                shuffle=False,
                 num_workers=num_workers,
     )
 

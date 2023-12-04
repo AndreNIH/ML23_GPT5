@@ -19,7 +19,7 @@ def load_img(path):
 
 def predict(img_title_paths):
     modelo = Network(48)
-    modelo.load_model("modelo_val_1.pt")
+    modelo.load_model("modelo_val_5.pt")
     for path in img_title_paths:
         im_file = (file_path / path).as_posix()
         original, transformed, denormalized = load_img(im_file)
@@ -48,9 +48,15 @@ def predict(img_title_paths):
         cv2.waitKey(0)
 
 if __name__=="__main__":
-    img_paths = ["./test_imgs/lluminati.png",
-    "./test_imgs/AcevesClosed.png",
-    "./test_imgs/AcevesOpen.png",
-    "./test_imgs/OjoPintura.png",
-    "./test_imgs/ISleep.png"]
+    img_paths = [
+        "./test_imgs/User1.jpg",
+        "./test_imgs/User2.jpg",
+        "./test_imgs/User3.jpg",
+        "./test_imgs/User4.jpg",
+        "./test_imgs/User5.jpg",
+        "./test_imgs/User6.jpg",
+        "./test_imgs/User7.jpg",
+        "./test_imgs/User8.jpg",
+        "./test_imgs/User9.jpg"
+    ]
     predict(img_paths)
