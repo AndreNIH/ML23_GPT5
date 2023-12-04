@@ -19,7 +19,7 @@ def load_img(path):
 
 def predict(img_title_paths):
     modelo = Network(48)
-    modelo.load_model("modelo_val_5.pt")
+    modelo.load_model("modelo_val_10.pt")
     for path in img_title_paths:
         im_file = (file_path / path).as_posix()
         original, transformed, denormalized = load_img(im_file)

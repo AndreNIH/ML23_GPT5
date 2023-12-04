@@ -52,7 +52,9 @@ class EyeDataset(Dataset):
 
     def __getitem__(self, idx):
         image = read_image(self.dataset_files[idx])
-        label = self.dataset_files[idx].split('\\')[-1:].split('_')[4] #Arreglar indexado
+        #label = self.dataset_files[idx].split('_')[4]
+        label = str(self.dataset_files[idx].split('/')[-1:]) #Arreglar indexado
+        label = label.split('_')[4]
         label = int(label)
 
         image = transforms.ToPILImage()(image)

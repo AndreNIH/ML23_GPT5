@@ -12,11 +12,13 @@ from tqdm import tqdm
 from data import get_loader
 from network import Network
 from plot_losses import PlotLosses
+from sklearn.metrics import precision_score, recall_score, accuracy_score
 
 def validation_step(val_loader, net, cost_function):
     val_loss = 0.0
-    correct = 0
-    total = 0
+    predictions = []
+    true_labels = []
+
     for i, batch in enumerate(val_loader, 0):
         batch_imgs = batch['transformed']
         batch_labels = batch['label']
@@ -31,12 +33,14 @@ def validation_step(val_loader, net, cost_function):
 
             preds = torch.where(proba >= 0.5, torch.tensor(1), torch.tensor(0))
 
-            total += batch_labels.size(0)
-            cor = (preds == batch_labels).sum().item()
-            correct += cor
+            predictions.extend(preds.cpu().numpy())
+            true_labels.extend(batch_labels.cpu().numpy())
 
-    accuracy = 100 * float(correct) / total
-    print(f"Accuracy: {accuracy}")
+    accuracy = accuracy_score(true_labels, predictions)
+    precision = precision_score(true_labels, predictions)
+    recall = recall_score(true_labels, predictions)
+    print(f"Accuracy: {accuracy}, Precision: {precision}, Recall: {recall}")
+
     return val_loss/len(val_loader)
 
 def train():
@@ -77,13 +81,13 @@ def train():
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         if(val_loss<best_epoch_loss):
-            modelo.save_model("modelo_val_5.pt")
+            modelo.save_model("modelo_val_10.pt")
             best_epoch_loss=val_loss
         if(train_loss<best_epoch_loss_train):
-            modelo.save_model("modelo_ent_5.pt")
+            modelo.save_model("modelo_ent_10.pt")
             best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
-    modelo.save_model("modelo_fin_5.pt")
+    modelo.save_model("modelo_fin_10.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":
