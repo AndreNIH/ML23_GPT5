@@ -52,8 +52,7 @@ class EyeDataset(Dataset):
 
     def __getitem__(self, idx):
         image = read_image(self.dataset_files[idx])
-        #label = self.dataset_files[idx].split('_')[4]
-        label = str(self.dataset_files[idx].split('/')[-1:]) #Arreglar indexado
+        label = str(self.dataset_files[idx].split('/')[-1:])
         label = label.split('_')[4]
         label = int(label)
 

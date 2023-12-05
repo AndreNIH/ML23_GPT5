@@ -7,6 +7,8 @@ import torch
 from transformaciones import *
 from data import ESTADO_MAP, test_transforms, visualizar_transforms
 import pathlib
+import platform
+
 
 file_path = pathlib.Path(__file__).parent.absolute()
 
@@ -19,7 +21,7 @@ def load_img(path):
 
 def predict(img_title_paths):
     modelo = Network(48)
-    modelo.load_model("modelo_val_10.pt")
+    modelo.load_model("modelo_val.pt")
     for path in img_title_paths:
         im_file = (file_path / path).as_posix()
         original, transformed, denormalized = load_img(im_file)
@@ -27,13 +29,11 @@ def predict(img_title_paths):
         if len(transformed.shape) ==3:
             transformed = transformed.unsqueeze(1)
         proba = modelo.predict(transformed)
-        print(proba)
         pred = torch.where(proba >= 0.5, torch.tensor(1), torch.tensor(0))
         pred = pred.item()
         pred = int(pred)
         pred_label = ESTADO_MAP[pred]
-        print(ESTADO_MAP[pred])
-        print(path)
+        print(f"Estado: {ESTADO_MAP[pred]}. Imagen: {path}. Probabilidad: {proba.item()}")
 
 
         h, w = original.shape[:2]
@@ -43,20 +43,40 @@ def predict(img_title_paths):
 
         denormalized = to_numpy(denormalized)
         denormalized = cv2.resize(denormalized, (resize_value, resize_value))
-        cv2.imshow("Predicción - original", img)
-        cv2.imshow("Predicción - transformed", denormalized)
-        cv2.waitKey(0)
+
+
+        os_name = platform.system()
+        if(os_name == "Linux"):
+            cv2.imshow("img", img)
+            cv2.waitKey(0)
+            cv2.imshow("img", denormalized)
+            cv2.waitKey(0)
+        else:
+            cv2.imshow("Predicción - original", img)
+            cv2.imshow("Predicción - transformed", denormalized)
+            cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 if __name__=="__main__":
     img_paths = [
-        "./test_imgs/User1.jpg",
-        "./test_imgs/User2.jpg",
-        "./test_imgs/User3.jpg",
-        "./test_imgs/User4.jpg",
-        "./test_imgs/User5.jpg",
-        "./test_imgs/User6.jpg",
-        "./test_imgs/User7.jpg",
-        "./test_imgs/User8.jpg",
-        "./test_imgs/User9.jpg"
+        "./test_imgs/User1.png",
+        "./test_imgs/User2.png",
+        "./test_imgs/User3.png",
+        "./test_imgs/User4.png",
+        "./test_imgs/User5.png",
+        "./test_imgs/User6.png",
+        "./test_imgs/User7.png",
+        "./test_imgs/User8.png"
+    ]
+    img_paths_dataset = [
+        "./test_imgs/user1.png",
+        "./test_imgs/user2.png",
+        "./test_imgs/user3.png",
+        "./test_imgs/user4.png",
+        "./test_imgs/user5.png",
+        "./test_imgs/user6.png",
+        "./test_imgs/user7.png",
+        "./test_imgs/user8.png"
     ]
     predict(img_paths)
+    predict(img_paths_dataset)

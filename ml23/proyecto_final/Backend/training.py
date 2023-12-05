@@ -45,8 +45,8 @@ def validation_step(val_loader, net, cost_function):
 
 def train():
     learning_rate = 1e-5
-    n_epochs= 5
-    batch_size = 256
+    n_epochs = 60
+    batch_size = 128
 
     train_dataset, train_loader, val_dataset, val_loader = get_loader(batch_size=batch_size)
 
@@ -81,13 +81,13 @@ def train():
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         if(val_loss<best_epoch_loss):
-            modelo.save_model("modelo_val_10.pt")
+            modelo.save_model("modelo_val.pt")
             best_epoch_loss=val_loss
         if(train_loss<best_epoch_loss_train):
-            modelo.save_model("modelo_ent_10.pt")
+            modelo.save_model("modelo_ent.pt")
             best_epoch_loss=train_loss
         plotter.on_epoch_end(epoch, train_loss, val_loss)
-    modelo.save_model("modelo_fin_10.pt")
+    modelo.save_model("modelo_fin.pt")
     plotter.on_train_end()
 
 if __name__=="__main__":
