@@ -45,7 +45,7 @@ def validation_step(val_loader, net, cost_function):
 
 def train():
     learning_rate = 1e-5
-    n_epochs = 60
+    n_epochs = 30
     batch_size = 128
 
     train_dataset, train_loader, val_dataset, val_loader = get_loader(batch_size=batch_size)
